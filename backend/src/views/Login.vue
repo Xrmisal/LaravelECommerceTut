@@ -1,16 +1,12 @@
 <script setup>
+import GuestLayout from '../components/GuestLayout.vue';
 
 </script>
 
 <template>
-        <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-            <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-                <img class="mx-auto h-10 w-auto" src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
-                <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">Sign in to your account</h2>
-            </div>
-            
-            <div class="mt-10 mx-auto w-full max-w-sm">
-                <form class="space-y-6" action="#" method="POST">
+    <GuestLayout title="Sign in to your account">
+            <div class="mt-10 mx-auto w-full max-w-sm space-y-6">
+                <form action="#" method="POST" class="space-y-6">
                     <div>
                         <label for="email" class="block text-sm/6 font-medium text-gray-100">Email address</label>
                         <div class="mt-2">
@@ -22,7 +18,7 @@
                         <div class="flex items-center justify-between">
                             <label for="password" class="block text-sm/6 font-medium text-gray-100">Password</label>
                             <div class="text-sm">
-                                <a href="#" class="font-semibold text-indigo-400 hover:text-indigo-300">Forgot password?</a>
+                                <router-link to="/request-password" class="font-semibold text-indigo-400 hover:text-indigo-300">Forgot password?</router-link>
                             </div>
                         </div>
                         <div class="mt-2">
@@ -33,13 +29,12 @@
                     <div>
                         <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Sign in</button>
                     </div>
-                </form>
-                
                 <p class="mt-10 text-center text-sm/6 text-gray-400">
                     Not a member?
                     {{ ' ' }}
                     <a href="#" class="font-semibold text-indigo-400 hover:text-indigo-300">Start a 14 day free trial</a>
                 </p>
+            </form>
             </div>
-        </div>
-    </template>
+    </GuestLayout>
+</template>
