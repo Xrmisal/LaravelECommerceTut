@@ -3,5 +3,5 @@
 </script>
 
 <template>
-    <div>Dashboard Form</div>
+    <div class="text-gray-100">Dashboard Form</div>
 </template>
