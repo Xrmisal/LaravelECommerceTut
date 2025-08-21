@@ -1,16 +1,30 @@
 <script setup>
-import {ref} from 'vue'
+import {onMounted, onUnmounted, ref} from 'vue'
 import Sidebar from "./Sidebar.vue";
 import TopHeader from "./TopHeader.vue";
+import store from '../store';
 
 defineProps({
     title: String
+})
+
+onMounted(() => {
+    store.dispatch('getUser')
+    updateSidebarState()
+    window.addEventListener('resize', updateSidebarState)
+})
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateSidebarState)
 })
 
 const sidebarOpened = ref(true);
 
 function toggleSidebar() {
     sidebarOpened.value = !sidebarOpened.value
+}
+function updateSidebarState() {
+    sidebarOpened.value = window.innerWidth > 768
 }
 
 </script>
