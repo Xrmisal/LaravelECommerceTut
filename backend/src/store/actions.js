@@ -3,7 +3,7 @@ import axiosClient from "../axios";
 export function getUser({commit}, data) {
     return axiosClient.get('/user', data)
         .then(({data}) => {
-            commit('setUser', data.user)
+            commit('setUser', data)
             return data
         })
 }
@@ -23,5 +23,19 @@ export function logout({commit}) {
             commit('setToken', null)
             
             return response
+        })
+}
+
+export function getProducts({commit, state}, {url = null, search, perPage}) {
+    commit('setProducts', [true])
+    url = url || '/products'
+    return axiosClient.get(url, {
+        params: {search, per_page: perPage}
+    })
+        .then((response) => {
+            commit('setProducts', [false, response.data])
+        })
+        .catch((response) => {
+            commit('setProducts', [false])
         })
 }

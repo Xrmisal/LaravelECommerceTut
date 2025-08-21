@@ -1,8 +1,12 @@
 <script setup>
-import {onMounted, onUnmounted, ref} from 'vue'
+import {onMounted, onUnmounted, ref, computed} from 'vue'
 import Sidebar from "./Sidebar.vue";
 import TopHeader from "./TopHeader.vue";
 import store from '../store';
+import Spinner from './core/Spinner.vue';
+
+const currentUser = computed(() => store.state.user.data)
+const sidebarOpened = ref(true);
 
 defineProps({
     title: String
@@ -18,7 +22,6 @@ onUnmounted(() => {
     window.removeEventListener('resize', updateSidebarState)
 })
 
-const sidebarOpened = ref(true);
 
 function toggleSidebar() {
     sidebarOpened.value = !sidebarOpened.value
@@ -30,7 +33,7 @@ function updateSidebarState() {
 </script>
 
 <template>
-    <div class="min-h-full flex">
+    <div v-if="currentUser.id" class="min-h-full flex">
         <!--    Sidebar-->
         <Sidebar :class="{'-ml-[200px]': !sidebarOpened}"/>
         <!--/    Sidebar-->
@@ -44,4 +47,5 @@ function updateSidebarState() {
             <!--      Content-->
         </div>
     </div>
+    <div v-else><Spinner /></div>
 </template>
