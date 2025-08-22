@@ -17,8 +17,8 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->text(20),
-            'image' => 'https://picsum.photos/200',
+            'title' => fake()->text(30),
+            'image' => 'https://picsum.photos/seed/picsum/200/300',
             'description' => fake()->realText(2000),
             'price' => fake()->randomFloat(2, 3, 5),
             'created_at' => now(),
