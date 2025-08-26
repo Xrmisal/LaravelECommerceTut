@@ -8,6 +8,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Resources\ProductListResource;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -72,8 +73,16 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $product->delete();
+        $disk = Storage::disk('public');
+        if($product->image) {
+            $disk->delete($product->image);
+            $dir = dirname($product->image);
+            if (empty($disk->files($dir)) && empty($disk->directories($dir))) {
+                $disk->deleteDirectory($dir);
+            }
+        }
 
+        $product->delete();
         return response()->noContent();
     }
 
