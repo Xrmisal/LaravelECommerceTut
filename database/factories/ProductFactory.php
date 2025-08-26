@@ -18,7 +18,7 @@ class ProductFactory extends Factory
     {
         return [
             'title' => fake()->text(30),
-            'image' => 'https://picsum.photos/seed/picsum/200/300',
+            'image' => null,
             'description' => fake()->realText(2000),
             'price' => fake()->randomFloat(2, 3, 5),
             'created_at' => now(),

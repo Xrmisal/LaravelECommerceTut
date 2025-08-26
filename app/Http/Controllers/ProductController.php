@@ -7,6 +7,9 @@ use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Resources\ProductListResource;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -30,7 +33,20 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
-        return new ProductResource(Product::create($request->validated()));
+        $data = $request->validated();
+        $data['created_by'] = $request->user()->id;
+        $data['updated_by'] = $request->user()->id;
+
+        $image = $data['image'] ?? null;
+        if ($image) {
+            $relativePath = $this->saveImage($image);
+            $data['image'] = $relativePath;
+            $data['image_mime'] = $image->getClientMimeType();
+            $data['image_size'] = $image->getSize();
+        }
+
+        $product = Product::create($data);
+        return new ProductResource($product);
     }
 
     /**
@@ -59,5 +75,21 @@ class ProductController extends Controller
         $product->delete();
 
         return response()->noContent();
+    }
+
+    private function saveImage(UploadedFile $image) {
+        $dir = 'images/' . Str::random();
+        $disk = Storage::disk('public');
+        if (!$disk->exists($dir)) {
+            $disk->makeDirectory($dir);
+        }
+        $name = Str::slug(pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME)) . '-' . Str::random(6) . '.' . $image->getClientOriginalExtension();
+
+        $path = $disk->putFileAs($dir, $image, $name);
+        if(!$path) {
+            throw new \RuntimeException('Unable to save file');
+        }
+
+        return $path;
     }
 }

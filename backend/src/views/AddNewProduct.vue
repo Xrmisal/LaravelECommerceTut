@@ -4,6 +4,7 @@ import {Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot} from 
 import { ExclamationIcon } from '@heroicons/vue/outline';
 import CustomInput from '../components/core/CustomInput.vue';
 import store from '../store';
+import Spinner from '../components/core/Spinner.vue';
 
 const product = ref({
     title: null,
@@ -11,6 +12,8 @@ const product = ref({
     description: null,
     price: null,
 })
+
+const loading = ref(false)
 
 const props = defineProps({
     modelValue: Boolean,
@@ -28,12 +31,18 @@ function closeModel() {
 }
 
 function onSubmit() {
+    loading.value = true
     store.dispatch('createProduct', product.value)
         .then(response => {
+            loading.value = false
             if(response.status === 201) {
                 store.dispatch('getProducts')
                 closeModel()
             }
+        })
+        .catch(err => {
+            loading.value = false
+            debugger;
         })
 }
 </script>
@@ -51,6 +60,7 @@ function onSubmit() {
                         <DialogPanel
                             class="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl rounded-xl bg-white p-4 text-left shadow-2xl"
                         >
+                            <Spinner v-if="loading" class="absolute left-0 top-0 bg-white right-0 bottom-0 flex items-center justify-center"/>
                             <header
                                 class="py-2 px-4 flex justify-between items-center"
                             >
@@ -70,6 +80,7 @@ function onSubmit() {
                             <form @submit.prevent="onSubmit">
                                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                     <CustomInput class="mb-2" v-model="product.title" label="Product Title" />
+                                    <CustomInput type="file" class="mb-2" label="Product Image" @change="file => product.image = file"/>
                                     <CustomInput type="textarea" class="mb-2" v-model="product.description" label="Description" />
                                     <CustomInput type="number" class="mb-2" v-model="product.price" label="Price"/>
                                 </div>
