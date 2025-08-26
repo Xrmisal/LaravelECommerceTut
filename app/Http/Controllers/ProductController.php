@@ -61,9 +61,24 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product)
     {
-        $product->update($request->validated());
+        $data = $request->validated();
+        $data['updated_by'] = $request->user()->id;
+
+        $image = $data['image'] ?? null;
+
+        if($image) {
+            $relativePath = $this->saveImage($image);
+            $data['image'] = $relativePath;
+            $data['image_mime'] = $image->getClientMimeType();
+            $data['image_size'] = $image->getSize();
+
+            if($product->image) {
+                Storage::deleteDirectory('public/' . dirname($product->image));
+            }
+        }
+        $product->update($data);
 
         return new ProductResource($product);
     }

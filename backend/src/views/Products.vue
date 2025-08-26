@@ -4,20 +4,30 @@ import store from '../store'
 import {PRODUCTS_PER_PAGE} from "../constants"
 import Spinner from '../components/core/Spinner.vue'
 import TableHeaderCell from '../components/core/TableHeaderCell.vue'
-import AddNewProduct from './AddNewProduct.vue';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { DotsVerticalIcon, PencilIcon, TrashIcon } from '@heroicons/vue/outline';
+import ProductModel from './ProductModel.vue';
 
 const perPage = ref(PRODUCTS_PER_PAGE)
 const search = ref('')
 const products = computed(() => store.state.products)
 const sortField = ref('updated_at')
 const sortDirection = ref('desc')
+
+const product=ref({})
 const showProductModel = ref(false)
 
 onMounted(() => {
     getProducts()
 })
+
+function editProduct(p) {
+    store.dispatch('getProduct', p.id)
+        .then(({data}) => {
+            product.value = data
+            showAddNewModel()
+        })
+}
 
 function getForPage(ev, link) {
     ev.preventDefault()
@@ -134,6 +144,7 @@ function deleteProduct(product) {
                                                     active ? 'bg-indigo-600 text-white' : 'text-gray-900',
                                                     'group flex w-full items-center rounded-md px-2 py-2 text-sm',
                                                 ]"
+                                                @click="editProduct(product)"
                                             >
                                                 <PencilIcon
                                                     :active="active"
@@ -197,6 +208,6 @@ function deleteProduct(product) {
             </a>
         </nav>
     </div>
-    <AddNewProduct v-model="showProductModel" />
+    <ProductModel v-model="showProductModel" :product="product" />
 </div>
 </template>
