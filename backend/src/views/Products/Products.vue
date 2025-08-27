@@ -6,11 +6,32 @@ import ProductsTable from './ProductsTable.vue';
 
 const products = computed(() => store.state.products)
 
-const product= ref({})
+const DEFAULT_PRODUCT = {
+    id: '',
+    title: '',
+    description: '',
+    image: '',
+    price: ''
+}
+
+const productModel = ref({...DEFAULT_PRODUCT})
+
 const showProductModel = ref(false)
 
 function showAddNewModel() {
     showProductModel.value = true
+}
+
+function editProduct(p) {
+    store.dispatch('getProduct', p.id)
+        .then(({data}) => {
+            productModel.value = data
+            showAddNewModel()
+        })
+}
+
+function onModelClose() {
+    productModel.value = {...DEFAULT_PRODUCT}
 }
 
 </script>
@@ -26,6 +47,6 @@ function showAddNewModel() {
             Add new Product
         </button>
     </div>
-    <ProductsTable />
-    <ProductModel v-model="showProductModel" :product="product" />
+    <ProductsTable @clickEdit="editProduct"/>
+    <ProductModel v-model="showProductModel" :product="productModel" @close="onModelClose" />
 </template>

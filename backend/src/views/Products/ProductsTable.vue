@@ -17,16 +17,14 @@ const sortDirection = ref('desc')
 const product=ref({})
 const showProductModel = ref(false)
 
+const emit = defineEmits(['clickEdit'])
+
 onMounted(() => {
     getProducts()
 })
 
 function editProduct(p) {
-    store.dispatch('getProduct', p.id)
-        .then(({data}) => {
-            product.value = data
-            showAddNewModel()
-        })
+    emit('clickEdit', p)
 }
 
 function getForPage(ev, link) {
@@ -71,7 +69,7 @@ function deleteProduct(product) {
 </script>
 
 <template>
-    <div class="bg-gray-900 p-4 rounded-lg shadow text-gray-200 border-3 border-indigo-900">
+    <div class="bg-gray-900 p-4 rounded-lg shadow text-gray-200 border-3 border-indigo-900 animate-fade-in-down">
         {{ search }}
         <div class="flex justify-between border-b-2 pb-3">
             <div class="flex items-center">
@@ -107,7 +105,10 @@ function deleteProduct(product) {
                 <p v-else class="text-center py-8 text-gray-300">No products found</p></td></tr>
             </tbody>
             <tbody v-else>
-                <tr v-for="product in products.data">
+                <tr v-for="(product, index) of products.data"
+                    class="animate-fade-in-down"
+                    :style="{'animation-delay': (index * 0.05) + 's'}"
+                >
                     <td class="border-b p-2">{{ product.id }}</td>
                     <td class="border-b p-2"><img :src="product.image_url" class="w-10 h-10 object-cover rounded-full"></td>
                     <td class="border-b p-2 max-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis">{{ product.title }}</td>
