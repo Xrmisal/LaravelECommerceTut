@@ -2,9 +2,9 @@
 import { computed, onUpdated, ref } from 'vue';
 import {Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot} from '@headlessui/vue'
 import { ExclamationIcon } from '@heroicons/vue/outline';
-import CustomInput from '../components/core/CustomInput.vue';
-import store from '../store';
-import Spinner from '../components/core/Spinner.vue';
+import CustomInput from '../../components/core/CustomInput.vue';
+import store from '../../store';
+import Spinner from '../../components/core/Spinner.vue';
 
 const props = defineProps({
     modelValue: Boolean,

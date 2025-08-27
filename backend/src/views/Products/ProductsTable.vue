@@ -1,9 +1,9 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue';
-import store from '../store'
-import {PRODUCTS_PER_PAGE} from "../constants"
-import Spinner from '../components/core/Spinner.vue'
-import TableHeaderCell from '../components/core/TableHeaderCell.vue'
+import store from '../../store'
+import {PRODUCTS_PER_PAGE} from "../../constants"
+import Spinner from '../../components/core/Spinner.vue'
+import TableHeaderCell from '../../components/core/TableHeaderCell.vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { DotsVerticalIcon, PencilIcon, TrashIcon } from '@heroicons/vue/outline';
 import ProductModel from './ProductModel.vue';
@@ -71,10 +71,6 @@ function deleteProduct(product) {
 </script>
 
 <template>
-    <div class="flex items-center justify-between mb-3 text-gray-200">
-        <h1 class="text-3xl font-semibold">Products</h1>
-        <button type="button" @click="showAddNewModel()" class="flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Add new Product</button>
-    </div>
     <div class="bg-gray-900 p-4 rounded-lg shadow text-gray-200 border-3 border-indigo-900">
         {{ search }}
         <div class="flex justify-between border-b-2 pb-3">
@@ -87,6 +83,7 @@ function deleteProduct(product) {
                     <option value="50" class="text-gray-900">50</option>
                     <option value="100" class="text-gray-900">100</option>
                 </select>
+                <span class="ml-3">Found {{ products.total }} products</span>
             </div>
             <div>
                 <input v-model="search" @change="getProducts(null)" class="appearance-none relative block w-48 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-200 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Type to Search products">
@@ -105,8 +102,9 @@ function deleteProduct(product) {
                     </TableHeaderCell>
                 </tr>
             </thead>
-            <tbody v-if="products.loading">
-                <tr><td colspan="5"><Spinner /></td></tr>
+            <tbody v-if="products.loading || !products.data.length">
+                <tr><td colspan="5"><Spinner v-if="products.loading" />
+                <p v-else class="text-center py-8 text-gray-300">No products found</p></td></tr>
             </tbody>
             <tbody v-else>
                 <tr v-for="product in products.data">
@@ -179,7 +177,7 @@ function deleteProduct(product) {
             </tbody>
         </table>
             <div v-if="!products.loading" class="flex justify-between items-center mt-5">
-                <span>
+                <span v-if="products.data.length">
                     Showing from {{ products.from }} to {{ products.to }}
                 </span>
                 <nav
