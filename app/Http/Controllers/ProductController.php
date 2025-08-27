@@ -11,6 +11,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -41,7 +43,7 @@ class ProductController extends Controller
         $image = $data['image'] ?? null;
         if ($image) {
             $relativePath = $this->saveImage($image);
-            $data['image'] = $relativePath;
+            $data['image'] = URL::to(Storage::url($relativePath));
             $data['image_mime'] = $image->getClientMimeType();
             $data['image_size'] = $image->getSize();
         }
@@ -70,7 +72,7 @@ class ProductController extends Controller
 
         if($image) {
             $relativePath = $this->saveImage($image);
-            $data['image'] = $relativePath;
+            $data['image'] = URL::to(Storage::url($relativePath));
             $data['image_mime'] = $image->getClientMimeType();
             $data['image_size'] = $image->getSize();
 
@@ -88,15 +90,12 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $disk = Storage::disk('public');
-        if($product->image) {
-            $disk->delete($product->image);
-            $dir = dirname($product->image);
-            if (empty($disk->files($dir)) && empty($disk->directories($dir))) {
-                $disk->deleteDirectory($dir);
-            }
+        if ($product->image) {
+            $disk = Storage::disk('public');
+            $path = Str::after(parse_url($product->image, PHP_URL_PATH), '/storage/');
+            $dir = dirname($path);
+            $disk->deleteDirectory($dir);
         }
-
         $product->delete();
         return response()->noContent();
     }
