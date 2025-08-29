@@ -106,8 +106,6 @@ function deleteProduct(product) {
             </tbody>
             <tbody v-else>
                 <tr v-for="(product, index) of products.data"
-                    class="animate-fade-in-down"
-                    :style="{'animation-delay': (index * 0.05) + 's'}"
                 >
                     <td class="border-b p-2">{{ product.id }}</td>
                     <td class="border-b p-2"><img :src="product.image_url" class="w-10 h-10 object-cover rounded-full"></td>
